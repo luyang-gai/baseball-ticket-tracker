@@ -1,0 +1,59 @@
+
+.modal-dialog {
+  height: 50%;
+
+  .modal-content {
+    height: 100%;
+
+    .modal {
+      display: flex;
+      flex-direction: column;
+      border: 3px solid lightblue;
+      border-radius: 8px;
+
+      .modal-header {
+        height: 20%;
+      }
+
+      .modal-body {
+        height: 60%;
+
+        .player-totals {
+          .player-totals-title {
+            background-color: lightblue;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid blue;
+          }
+
+          .player-totals-info {
+            table {
+              width: 100%;
+              thead {
+                tr {
+                  th {
+                    border: 1px solid black;
+                    text-align: center;
+                  }
+                }
+              }
+              tbody {
+                tr {
+                  td {
+                    border: 1px solid black;
+                    text-align: center;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .modal-footer {
+        height: 20%;
+      }
+    }
+  }
+}
+

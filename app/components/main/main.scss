@@ -1,0 +1,44 @@
+.main-page {
+  .search-bar {
+    margin-bottom: 10px;
+  }
+
+  table {
+    border-spacing: 0px;
+    thead {
+      background-color: grey;
+
+      tr {
+        th {
+          padding: 10px;
+          border: 1px solid black;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          border: 1px solid black;
+          padding: 5px;
+        }
+        td:not(.player-name) {
+          text-align: center;
+        }
+        .player-name {
+          .player-dl {
+            color: red;
+          }
+          img.fangraphs-icon {
+            cursor: pointer;
+            float: right;
+            padding-left: 5px;
+          }
+        }
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2
+      }
+    }
+  }
+}
