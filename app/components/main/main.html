@@ -13,6 +13,13 @@
     <!--<br/>-->
   <!--</div>-->
   <!--{{ eventHash }}-->
+<select ng-model="selectedEvent">
+  <option ng-repeat="sEvent in events" value="{{sEvent.id}}" ng-click="optionSelected">{{ sEvent.short_title }} {{ sEvent.datetime_local }}</option>
+  <!-- <option value="volvo">Volvo</option> -->
+  <!-- <option value="saab">Saab</option> -->
+  <!-- <option value="mercedes">Mercedes</option> -->
+  <!-- <option value="audi">Audi</<OPTION></OPTION>  > -->
+</select>
 </div>
 
 <div id="curve_chart" style="width: 1500px; height: 750px"></div>

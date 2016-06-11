@@ -3,34 +3,64 @@ angular.module('BaseballStats')
 	[
 		'$scope',
 		'$http',
-		($scope, $http) => {
-			const backendURL = 'http://localhost:8081/data';
+		'eventFactory',
+		'tpsFactory',
+		($scope, $http, eventFactory, tpsFactory) => {
+
 			$scope.events = [];
 			$scope.eventHash = {};
 
-			function loadTicketData() {
-				$http.get(backendURL).then((data) => {
+			$scope.optionSelected = function() {
+				console.log($scope.selectedEvent);
+			};
+
+			$scope.$watch('selectedEvent', (newValue, oldValue) => {
+				if (newValue) {
+					getTpsById(newValue);
+				}
+			});
+
+			function getTpsById(eventId) {
+				tpsFactory.getTpsById(eventId).then((data) => {
 					splitData(data.data);
 				});
 			}
 
-			function splitData(events) {
+
+			function getAllEvents() {
+				eventFactory.getEvents().then((data) => {
+					$scope.events = data.data;
+					insertEventDataIntoHash($scope.events);
+				});
+			}
+
+			function insertEventDataIntoHash(events) {
 				for (let event of events) {
-					if (event.UTC) {
-						let gameTime = new Date(event.datetime_local);
-						let ticketPriceTime = new Date(event.UTC);
+					$scope.eventHash[event.id] = event;
+				}
+			}
+
+			function splitData(ticketPriceSnapshots) {
+				let ticketPriceHashData = {};
+				let currentEventData = '';
+
+				for (let ticketPriceSnapshot of ticketPriceSnapshots) {
+					if (ticketPriceSnapshot.UTC) {
+						let gameTime = new Date(ticketPriceSnapshot.datetime_local);
+						let ticketPriceTime = new Date(ticketPriceSnapshot.UTC);
 						let timeBeforeGame = gameTime - ticketPriceTime;
 
-						event['timeToGame'] = timeConversion(timeBeforeGame);
-						if ($scope.eventHash[event.id]) {
-							$scope.eventHash[event.id].push(event);
+						ticketPriceSnapshot['timeToGame'] = timeConversion(timeBeforeGame);
+						if (ticketPriceHashData[ticketPriceSnapshot.id]) {
+							ticketPriceHashData[ticketPriceSnapshot.id].push(ticketPriceSnapshot);
 						} else {
-							$scope.eventHash[event.id] = [event];
+							ticketPriceHashData[ticketPriceSnapshot.id] = [ticketPriceSnapshot];
 						}
 					}
 				}
 
-				let data = createGraphDataSet($scope.eventHash);
+				let data = createGraphDataSet(ticketPriceHashData);
+				console.log(`splitData results: ${data}`);
 				createGraph(data);
 			}
 
@@ -42,7 +72,8 @@ angular.module('BaseballStats')
 					for (let eventPriceIndex in originalData[event]) {
 						let thisEvent = originalData[event];
 						if (eventPriceIndex === '0') {
-							games.push(thisEvent[eventPriceIndex].short_title);
+							// games.push(thisEvent[eventPriceIndex].short_title);
+							games.push('testName');
 						}
 						if (data[eventPriceIndex]) {
 							data[eventPriceIndex].push(thisEvent[eventPriceIndex].lowest_price);
@@ -79,25 +110,26 @@ angular.module('BaseballStats')
 			}
 
 			function createGraph(dataToBeGraphed) {
-				google.charts.load('current', {'packages':['corechart']});
-				google.charts.setOnLoadCallback(drawChart);
+				console.log(`dataToBeGraphed: ${dataToBeGraphed}`);
+				// google.charts.setOnLoadCallback(drawChart);
 
-				function drawChart() {
-					var data = google.visualization.arrayToDataTable(dataToBeGraphed);
+				// function drawChart() {
+				var data = google.visualization.arrayToDataTable(dataToBeGraphed);
 
-					var options = {
-						title: 'Company Performance',
-						legend: { position: 'bottom' }
-					};
+				var options = {
+					title: 'Company Performance',
+					legend: { position: 'bottom' }
+				};
 
-					var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+				var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
-					chart.draw(data, options);
-				}
+				chart.draw(data, options);
+				// }
 			}
 
 			function init() {
-				loadTicketData();
+				getAllEvents();
+				google.charts.load('current', {'packages':['corechart']});
 			}
 
 			init();
