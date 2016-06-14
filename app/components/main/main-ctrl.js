@@ -42,11 +42,12 @@ angular.module('BaseballStats')
 
 			function splitData(ticketPriceSnapshots) {
 				let ticketPriceHashData = {};
-				let currentEventData = '';
+				console.log($scope.selectedEvent);
+				let currentEventData = $scope.eventHash[$scope.selectedEvent];
 
 				for (let ticketPriceSnapshot of ticketPriceSnapshots) {
 					if (ticketPriceSnapshot.UTC) {
-						let gameTime = new Date(ticketPriceSnapshot.datetime_local);
+						let gameTime = new Date(currentEventData.datetime_local);
 						let ticketPriceTime = new Date(ticketPriceSnapshot.UTC);
 						let timeBeforeGame = gameTime - ticketPriceTime;
 
@@ -79,7 +80,7 @@ angular.module('BaseballStats')
 							data[eventPriceIndex].push(thisEvent[eventPriceIndex].lowest_price);
 						}
 						else {
-							data.push([eventPriceIndex]);
+							data.push([thisEvent[eventPriceIndex]['timeToGame']]);
 							data[eventPriceIndex].push(thisEvent[eventPriceIndex].lowest_price);
 						}
 					}
@@ -98,15 +99,16 @@ angular.module('BaseballStats')
 
 				var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1);
 
-				if (seconds < 60) {
-					return seconds + " Sec";
-				} else if (minutes < 60) {
-					return minutes + " Min";
-				} else if (hours < 24) {
-					return hours + " Hrs";
-				} else {
-					return days + " Days"
-				}
+				// if (seconds < 60) {
+				// 	return seconds + " Sec";
+				// } else if (minutes < 60) {
+				// 	return minutes + " Min";
+				// } else if (hours < 24) {
+				// 	return hours + " Hrs";
+				// } else {
+				// 	return days + " Days"
+				// }
+				return days;
 			}
 
 			function createGraph(dataToBeGraphed) {
